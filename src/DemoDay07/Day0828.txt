@@ -1,0 +1,130 @@
+第二章
+一、Oracle公司的介绍
+   又名 甲骨文公司   号 神喻  代神说话的人
+   暗示公司寓意做霸主的决心 指在IT领域
+
+   地位：
+         1.属于全球第一大数据库厂商（每一个字段怎么用，字段与字段什么关系）
+         2.全球第二大独立软件供应商
+
+二、公司的发展与现状
+         1.1970 数据库起家
+         2.1980 Oracle6版本
+         3.1990 Oracle7版本 多元化产品 以数据库为优先发展
+         4.1995 Oracle8版本
+         5.1999 Oracle9i版本
+         6.2002 Oracle9i2版本
+         7.2003 Oracle10g版本
+         8.2007 Oracle11g版本
+         9.近代 Oracle12c版本
+
+         2009年，甲骨文公司以每股9.5美元收购SUN公司，交易的总价值是74亿美元
+         BOSS：Larry Ellisin
+              美国福布斯排行前30位，是Oracle数据库的建立者和发展者，也是IT界的风云人物
+              （淘宝--》亚马逊）
+              程序员出生：在40岁之前还是PG   SE（项目组长） PL（项目主管） PM（项目经理）
+
+         产品线
+                   数据库  核心和主干
+                   系统    环境【语言（日本、韩国语言）】UNIX  Linux ：接近系统底层的语言（纯命令，多背）-》安全，Windows：不安全
+                                                         --》部署项目的时候，讲
+                   应用服务器：Oracle application server
+                   开发工具：plsql     Oracle designer...
+                   企业资源计划：ERP（举例：人才信息，与公司匹配，猎头）
+                   客户关系管理：CRM（举例：银行--客户 VIP 一对多，多对多）
+                   人力资源管理软件：HCM
+
+三、Oracle的运行以及结构
+         1.用户进程
+         2.服务器进程  PGA
+         3.实例【orcl】（orcl就是一个实例）
+                  3.1内存结构
+                          1.共享池
+                          2.数据缓存区 SGA
+                          3.日志缓存区 （举例，银行取钱）
+                  3.2后台进程
+                          1.后台的业务逻辑
+                          2.事务
+                          3.其他服务进程
+
+                          3.2.1参数文件
+                                 数据文件
+                                 控制文件
+                                 日志文件
+                          3.2.2口令文件
+
+四、Oracle运行及运行的原理
+         1.监听器：Listener 它是一个重要的数据库服务器的组件，在整个Oracle体系结构中扮演着重要的作用。
+            作用：1.监听客户端请求
+                  2.为客户端请求分配Server Process
+                  3.注册实例服务
+                  4.错误的转移
+                  5.负载均衡衡量
+         2.数据库服务：在数据库服务器上启动Oracle实例
+                  1.Oracle服务器是由Oracle数据库和Oracle实例组成
+                  2.Oracle数据库是一个数据的集合，存放在数据文件中，该集合被视为一个逻辑单元
+                  3.Oracle实例由管理数据库的后台进程和内存结构所构成
+         3.数据库的实例：
+                  1.Oracle实例是内存结构和后台进程的集合
+                  2.启动Oracle实例的过程即分配内存启动后台进程
+                  3.Oracle实例的内存包括SGA和PGA，当启动实例的时候分配SGA（数据缓存区，在数据库中），当服务器进程建立的时候
+                  分配PGA（服务器进程），一般情况下 SGA：PGA=8:1 来进行内存分配（PGA引领用户进程进入数据库，能占实例多大的内存空间呢？就像一个人进入一个房间，人能占房间多大地方呢）
+
+五、sqlplus常用的命令
+         1.连接命令
+                connect 用户名/密码@网络服务名（orcl） [as sysdba/sysoper]
+                当要使用特权用户身份链接时 必须带上as sysdba或者 as sysoper
+         2.显示当前的用户：
+                show user;
+         3.修改当前用户的密码
+                 password
+         4.断开当前链接
+                 disc
+         5.交互式命令：& 它可以替代变量，而该变量在执行的时候，需要用户输入
+                 select * from emp;  查询整张表
+                 select * from emp where job='&job';查询某张表中的一个工种,输入参数：ANALYST（b不需要加分号）
+         6.编辑命令：edit 文件路径名称
+                 edit c:\1.sql（中间有空格）
+         7.spool 该命令可以将屏幕上的内容输出到指定文件中（就是相当于把你操作的内容以截屏/文字的形式显示到指定的文件中）
+                 spool d:\a.sql
+                 中间是sql文的操作（一些sql语句操作）
+                 ....
+                 spool off;
+
+
+创建用户
+         1.创建用户
+               create user 用户名 identity by 密码 default tablespace 表空间名（需要先创建表空间名和临时表空间名才可以把用户放进去）
+               create user Jack identity by 123456 default tablespace system;//用户在系统表中创建完毕
+
+--创建临时表空间
+  create temporary tablespace mytemp tempfile 'd://tempsyjy.dbf' size 5m autoextend on;
+--表空间
+  create tablespace SYJY datafile 'd://SYJY.DBF' size 5m autoextend on;
+--创建用户的同时既有默认表空间又有临时表空间
+  create user lili identity by 123456 default tablespace syjy
+  temporary tablespace mytemp;
+--修改用户的密码
+可以在USER上给出系统的权限edit-》system privilege-》create session：可以登录上
+  alter user 用户名 identified by 新密码 default tablespace 表空间
+  temporary tablespace 临时表空间
+alter user jack identified by 456789; //修改密码
+alter user jack identified by 456789 default tablespace syjy;//改一下默认表空间，就是把之前的表空间改为现在的这个
+（在jack用户登录没有权限的时候不能修改自己）（scott可以修改自己的密码：看一下USER里面-》edit-》role /system privilege）
+alter user jack identified by 456789 default tablespace syjy
+temporary tablespace mytemp;//可以圈中+F8:就执行当前字段吗？？？
+
+--删除用户
+  drop  user 用户名
+  drop user jack;//这时无法直接删除，因为把很多表空间赋给了jack，如果刚开始
+  drop user jack cascade;//级联删除，这是由于jack分配了表空间，这时就删除了（重启一下软件）
+
+
+
+
+
+
+
+
+
+

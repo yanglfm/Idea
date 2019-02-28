@@ -1,0 +1,259 @@
+JFDML JFormDesigner: "6.0.4.0.167" Java: "1.8.0_152-release" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) ) {
+			name: "this"
+			"$locationPolicy": 1
+			"$sizePolicy": 1
+			"visible": true
+			"defaultCloseOperation": 3
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "用户名"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 170
+				"y": 85
+				"width": 46
+				"height": 34
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField1"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 240
+				"y": 90
+				"width": 180
+				"height": 30
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "密码"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 180
+				"y": 125
+				"width": 70
+				"height": 34
+			} )
+			add( new FormComponent( "javax.swing.JPasswordField" ) {
+				name: "passwordField1"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 240
+				"y": 127
+				"width": 180
+				"height": 30
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "性别"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 180
+				"y": 185
+				"width": 36
+				"height": 34
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "comboBox1"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "1995"
+					addElement( "1995" )
+					addElement( "1996" )
+					addElement( "1997" )
+					addElement( "1998" )
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 240
+				"y": 235
+				"width": 75
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "comboBox2"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "1"
+					addElement( "1" )
+					addElement( "2" )
+					addElement( "3" )
+					addElement( "4" )
+					addElement( "5" )
+					addElement( "6" )
+					addElement( "7" )
+					addElement( "8" )
+					addElement( "9" )
+					addElement( "10" )
+					addElement( "11" )
+					addElement( "12" )
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"width": 75
+				"height": 30
+				"x": 330
+				"y": 235
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "comboBox3"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "1"
+					addElement( "1" )
+					addElement( "2" )
+					addElement( "3" )
+					addElement( "4" )
+					addElement( "5" )
+					addElement( "6" )
+					addElement( "7" )
+					addElement( "8" )
+					addElement( "9" )
+					addElement( "10" )
+					addElement( "11" )
+					addElement( "12" )
+					addElement( "13" )
+					addElement( "14" )
+					addElement( "15" )
+					addElement( "16" )
+					addElement( "17" )
+					addElement( "18" )
+					addElement( "19" )
+					addElement( "20" )
+					addElement( "21" )
+					addElement( "22" )
+					addElement( "23" )
+					addElement( "24" )
+					addElement( "25" )
+					addElement( "26" )
+					addElement( "27" )
+					addElement( "28" )
+					addElement( "29" )
+					addElement( "30" )
+					addElement( "31" )
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"width": 75
+				"height": 30
+				"x": 415
+				"y": 235
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label4"
+				"text": "生日"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"width": 26
+				"height": 34
+				"x": 180
+				"y": 235
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label5"
+				"text": "   兴趣爱好"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"width": 75
+				"height": 34
+				"x": 145
+				"y": 275
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "checkBox1"
+				"text": "唱歌"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 240
+				"y": 285
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label6"
+				"text": "邮箱"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 180
+				"y": 325
+				"width": 35
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label7"
+				"text": "手机号码"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 160
+				"y": 375
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "checkBox2"
+				"text": "跳舞"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 310
+				"y": 285
+				"width": 70
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "checkBox3"
+				"text": "溜冰"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 380
+				"y": 285
+				"width": 60
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "checkBox4"
+				"text": "拳击"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 455
+				"y": 285
+				"width": 65
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField2"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 240
+				"y": 370
+				"width": 180
+				"height": 30
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField3"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 240
+				"y": 320
+				"width": 180
+				"height": 30
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button1"
+				"text": "提交"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 240
+				"y": 445
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button2"
+				"text": "取消"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 370
+				"y": 445
+			} )
+			add( new FormComponent( "javax.swing.JRadioButton" ) {
+				name: "radioButton2"
+				"text": "男"
+				"$buttonGroup": new FormReference( "buttonGroup2" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 245
+				"y": 195
+			} )
+			add( new FormComponent( "javax.swing.JRadioButton" ) {
+				name: "radioButton3"
+				"text": "女"
+				"$buttonGroup": new FormReference( "buttonGroup2" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 330
+				"y": 195
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 45 )
+			"size": new java.awt.Dimension( 550, 550 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroup1"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 405, 660 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroup2"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 325, 747 )
+		} )
+	}
+}

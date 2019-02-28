@@ -1,0 +1,47 @@
+1.注解
+  java的注解是附加在代码上的一些元素信息，用于一些工具在编译、运行时
+  进行解析和使用，起到一种说明、配置的功能，注解是不会影响到代码的实际
+  逻辑，仅仅是起到一种辅助的作用。
+  注解是在JDK1.5之后引入的，它是用来将任何的信息与元素与程序元素进行关联，
+  这些元素可以是类、方法、成员变量，它们是为程序的元素
+  加上更直观和明了的说明
+
+2.注解有些什么用处？
+  1.生成文档，也就是java最早提供的注解，如@param @return
+  2.跟踪代码的依赖性，实现替代配置文件的功能，在这里大量使用注解配置，
+  可以简化配置文件的书写
+  3.在编译的过程中进行格式的检查：如@override，放在方法前，如果这个
+  方法并不是重写方法，换言之不存在子父类关系的方法，则编译不过
+
+3.注解的原理
+  注解本质上是继承了一个叫Annotation的特殊接口，其具体实现类是java运行时
+  生成的动态代理类。而我们需要通过反射获取注解的时候，返回的是java运行时
+  生成的动态代理类的对象$Proxy,通过代理对象调用自定义注解【接口】的方法，
+  会最终调用AnnotationInvocationHandler中的invoke方法，这个方法会从menberValues
+  这个Map中来索引出对应的值，而menberValues的来源是Java的常量池
+
+4.元注解
+  java.lang.annotation 提供四种元注解，专门注解其他的注解
+  @Documented-它的含义是是否将包含在javadoc文档中
+  @Retention-什么时候使用该注解
+  @Target-注解用在什么地方
+  @Inherited-是否允许子类继承该注解
+
+  @Retention--它是定义注解的生命周期
+     1.RetentionPolicy.SOURCE:在编译的时候就被丢弃了，这些注解在编译结束过后不再有任何意义，
+     所以它是不会写入字节码 @override就属于这类注解类型
+     2.RetentionPolicy.CLASS：它是在类被加载的时候就被丢弃了，在字节码文件处理中有用，注解
+     默认使用的就是这种方式
+     3.RetentionPolicy.RUNTIME：始终不会丢弃，运行期也保留该注解，因此可以使用反射来读取
+     该注解的信息，我们自定义注解通常使用该方法
+  @Target：它表示注解用在什么地方，默认值可以是任何的元素，它可以用的参数包括以下几种：
+     1.ElementType.CONSTRUCTOR:它是用于描述一个构造器
+     2.ElementType.FIELD:用来描述成员变量、对象、属性 包括enum实例
+     3.ElementType.LOCAL_VARIABLE：它是用于描述局部变量的
+     4.ElementType.METHOD：它是用于方法的描述
+     5.ElementType.PACKAGE：它是用于包的描述
+     6.ElementType.PARAMETER：它是用于参数的描述
+     7.ElementType.TYPE：用于描述类、接口或enum声明
+  @Documented：它是一个简单的Annotations标记注解，表示是否将信息添加到java文档中
+  @Inherited：它是定义该注解和子类之间的关系
+

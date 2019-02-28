@@ -1,0 +1,96 @@
+//获取月，日=系统的月日
+20180904AM
+
+第七章 数据库的高级查询
+1.聚合查询
+一、聚合函数 求总分
+语法： select sum（列）from 表名
+select sum(grade)from stuco;//总分
+----不是单组分组函数 字段是不能就这么直接和聚合函数拼接，
+解决的方法就是分组，根据姓名来分组，把它作为一组对象，
+select stuname，sum（cousegrade） from student;//不能这么写
+select stuname，sum（cousegrade） from student group by stuname;//根据姓名来分组
+
+select * from emp;
+---根据部门进行分组并且求得每个部门薪资的总和
+select sum（salary），deptno from emp group by deptno;
+//根据部门来分组，只有一个部门时的薪资总和，分别展示不同部门的薪资总和
+//不在一张表中不行，在一张表上也不行
+----avg 平均值
+select avg（sal）from emp;
+根据10号部门 求得该部门的平均薪资
+select avg（sal）from emp where deptno=10;
+----max 最大值
+select * from emp where deptno=10;
+根据10号部门 求得该部门的最大薪资
+select max（sal）from emp where deptno=10;
+----min 最小值
+select * from emp where deptno=10;
+根据10号部门 求得该部门的最小薪资
+select min（sal）from emp where deptno=10;
+----count 行数 统计一张表中有多少条数据
+select count(*) from emp;//14 统计一张表中行数
+----求得成绩表的平均分，但要取整
+
+造表
+create table stu(//学生表
+  stuid int primary key,
+  birthday date,
+  email varchar2(20),
+  address varchar2(20)
+)
+create table course（//课程表
+    courseid int primary key,
+    cousername varchar2(20)
+）;
+create table score（//成绩表
+    scoreid int primary key,
+    stuid int,
+    courseid int,
+    mark number(5,2),
+    constraint fk_stuid foreign key(stuid) references stu(stuid),
+    constraint fk_courseid foreign key(courseid) references course(courseid)
+）;
+score://课程id号表示引用的是哪个课程
+   stuid  courseid mark
+1     1     1     80
+2     1     2     70
+3     1     3     40
+4     2     1     90
+5     2     2     40
+6     2     3     100
+7     3     1     80
+8     3     2     60
+9     3     3     90
+
+------查询学生的学号和该学生对应的总分
+select stuid,sum(mark) from score group by stuid;
+------求每个同学的平均分和总分，并按总分降序排序
+select  stuid,avg(mark),sum(mark) from score group by stuid order by sum(mark)desc;
+
+分组查询的语法
+select 列名 from 表名 group by 列（前面有几个非聚合的，就分几个组）
+----查询每门课程的平均值
+select 列名 from 表名 group by 列 having 条件
+select stuid,courseid  from score group by stuid,courseid;
+select stuid,courseid  from score group by stuid,courseid having count(*)>=3;
+--having条件是表示在前面已经查询得到结果的情况下再一次进行刷选
+HAVING和WHERE条件的相同点和区别点
+都表示条件的过滤
+HAVING只能写在GROUP后，WHERE可以出现任何情况
+先执行WHERE再执行GROUP BY最后执行HAVING
+HAVING中可以使用聚合函数，WHERE不能使用
+---------------
+20180904PM
+根据什么group by,大于两条记录，查什么东西，条件是什么,
+inner join on
+---如果希望查询得到学生的姓名课程科目和成绩该怎么办？
+select s.stuname,c.coursename,sc.mark from stu s,course c,score sc where
+s.stuid=sc.stuid and sc.courseid=c.courseid;
+---查询学生的成绩和姓名(从哪个表中查询出什么字段)
+select s.stuname,sc.mark from stu s,score sc where sc.stuid=s.stuid;
+--方法2
+select s.stuname,sc.mark from stu s inner join score sc on sc.stuid=s.stuid;//on后面相当于where
+---查询科目名称以及成绩
+select c.cousername,sc.mark from course c,score sc where c.courseid=sc.courseid;
+select c.coursename,sc.mark from course s inner join score sc on c.courseid=sc.courseid;

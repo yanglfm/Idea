@@ -1,0 +1,189 @@
+第三章 权限
+   Oracle数据库的权限是分两类：
+          1.系统权限
+             它是提供用户在整个DBMS系统中执行操作的能力，
+             会影响到整个数据库系统的安全
+
+          2.对象权限
+             它是指赋予用户在特定数据库对象执行特定的操作能力，
+             这些对象包括我们的数据表，视图字段，序列等
+             （1.重建一个数据库，环境变量，树根没事就没事）
+二、常见的系统权限（自己去查其他的权限）
+          create session     链接数据库（可以连上数据库）
+          create sequence    创建序列【自动增长列】
+          create synonym     创建同名对象
+          create table       创建表
+          insert any table   往所有表中插入记录（什么表都能插）
+          select any table   查询所有的表
+          drop any table     删除所有表
+          create user        创建用户
+
+三、赋予系统权限
+       语法
+           grant 权限1，权限2  to 用户名  【with admin option】
+           grant create session，create table to jack;//给jack 这两个权限（表仍然不能创建）
+           grant create session，create table，unlimited tablespace to jack;//这时进入这个jack账号有了表空间的权限
+       --》进入scott用户中
+       --查询表中所有内容
+       select * from emp;
+       -->进入jack用户中
+       新建一个a表
+       随便编辑的话
+       select * from a;这时可以出现表a的内容，但是无法查询emp这个表
+       --查询表中所有内容
+       select * from emp;
+       -->进入system时
+       --查看其它用户下的表时，是用户名.表名
+       select * from scott.emp;
+       -->进入jack用户时，权限不到位，jack用户无法查看其它用户下的表
+       -->给jack用户查看scott用户下的emp表权限
+       语法：grant select on 用户名.表名 to 用户名;
+       grant select on scott.emp to jack;//在system中给这句话后，回过头登录jack用户时，可以查看scott。emp这张表，但是如果查看其它的dept这张表时，仍然不可以
+
+       --向下继续赋予权限的能力（with admin option）（1）//在system中给jack赋予向下继续赋予权限的能力
+       grant create session，create table，unlimited tablespace to jack with admin option;
+       --删除用户
+       drop user lili cascade;//先关闭在打开，就没有这个lili用户了，因为有缓存
+       create user lili identified by 123456;//在system中创建lili这个用户（2）
+       //切换成jack账号（3）
+       grant  create session，create table，unlimited tablespace to lili;//在jack账户中给lili赋予创建表的权限
+
+       --收回权限（系统收回jack权限时，只收回它一个人，jack所赋予权限的lili是不受影响的）
+       revoke 权限1，权限2 from 用户
+       revoke create session from jack;//收回jack的登录权限，jack无法登录了
+       【with admin option 一般来说，很少用】
+
+四、常用对象权限（修改用户）
+   -->scott用户中，打开tables-->每一行是一个实体
+   alter 修改
+   insert 是插入一条
+   update 是修改一条
+ -- alter    修改
+   insert  新增数据
+   update  修改数据
+   delete   删除数据
+   select    查询数据
+   execute   执行存储过程
+
+
+并发过程，都是链接数据库
+1.dos命令
+2.软件执行软件登录system
+
+--赋予对象权限
+  语法：grant 权限1，权限2 on 对象名 to 用户名
+  grant dba to jack;//给jack最大权限，这时候登录jack用户时，都可以干了
+  -->回到system中，先把lili的系统权限全部收掉
+  --给lili一个链接对象、编辑数据表的对象
+  grant connect，resource to lili;//建表、建字段的用法都可以
+ --为什么给connect，resource这两个权限，就可以建表，建字段？
+ --connect，resource是角色权限的赋予   相当于苏州的某个厂长、市长、省长，connect是一种角色，就包含了这个角色下所有的权限，用一个角色去包含很多种权限
+给了角色，就不用create 权限了，自然就包含了好多权限
+
+五、角色
+角色是系统权限和对象权限的集合，可以分配给一个用户
+（一个角色一次性有很多权限）
+XXX系统
+   数据源：表 多张表 表与表之间还有关系
+           boss某些用户只可以查看某些表，但是不可以做修改操作
+           其他数据库是做不到的，只有Oracle可以完成这样的需求
+
+--查看角色中的权限（首先找有dba身份的人：system）
+select * from dba_sys_privs;//这是查系统（system）的权限
+select * from dba_sys_privs where grantee='CONNECT';//查询这个connect具有一个系统权限就是create session
+select * from dba_sys_privs where grantee='RESOURCE';//这个就具有很多权限了
+
+--自定义角色
+--create role 角色名//1.这是先创建角色
+--将系统权限或对象权限赋予角色//2.要分开给系统权限和对象权限
+--grant 系统权限 to 角色名
+--grant 对象权限 to 角色名
+记住：用任何东西，先从system下手，因为它是dba
+举例：
+create role myrole;
+grant create session，unlimited tablespace，resource to myrole;//这是错误的，要分开将系统权限和对象权限赋予给myrole
+grant unlimited tablespace to myrole;//为什么不能赋予这个权限，如何完成赋予
+？？？？？？？？？
+1.dba是预定义角色
+2.在赋予dba
+给定的角色不能影响系统的权限
+1.drop user tom cascade;
+然后重新创建一个tom用户
+2.通过dba的身份给tom dba这个角色
+--赋予dba角色
+grant dba to tom;
+3.系统给tom这个dba角色的时候，给了系统的角色中有unlimited tablespace这个系统角色
+
+--将角色赋予tom用户
+--grant 角色 to 用户名
+grant myrole to tom;
+（除了grant dba to tom这个做法，如何给自定义角色赋予权限）
+--撤销角色
+语法：revoke 角色名 from 用户名
+revoke myrole from tom;//这样就登录不了tom账户了
+
+--查看指定用户下的所有表
+select * from all_tables where owner='SCOTT';
+
+--查询系统中有权限的表
+select * from all_tables;（系统中存在的表，只要这个账号中有的表都可以查到）
+
+--系统表的查看
+select * from dba_tables;（带有dba权限的）
+
+--查询当前用户下的所有表
+select * from user_tables;（当前用户下面的所有表）——>切换为scott时下面的所有表
+
+  --导出数据库所有数据（不要用）
+  $exp  用户名/密码@服务名 file=路径名.dmp full=y;//尽量不要去用
+
+  --导出某个用户的数据（用这个）
+  $exp 用户名/密码@服务器名 file=路径名.dmp owner=(用户名);
+  --> $exp 用户名/密码@服务器名 file=路径名.dmp owner='用户名';//命令语句中去用
+  $exp scott/tiger@orcl file=d:/scott.dmp owner='SCOTT';//在dos命令中先输入：system，口令：123456，然后输入这个命令语句，就可以导出了
+
+  --导出某张表（用这个）
+  $exp用户名/密码@服务器名 file=路径名.dmp tables=(表名);
+
+ --表的复制（大小写无所谓）
+create table emp as select * from scott.emp;
+create table DEPT as select * from scott.DEPT;
+create table BONUS as select * from scott.BONUS;
+create table SALGRADE as select * from scott.SALGRADE;（把scott的四张表全部复制过来）
+
+--导入数据（用这个）
+--$imp  用户名/密码@服务名 file=路径名.dmp  fromuser=用户名 touser=用户名
+--》$imp  scott/123456@orcl file=d:/SCOTT.dmp  fromuser='SCOTT' touser='SCOTT';
+
+
+数据库设计：
+BBS论坛的设计：主页是一张表，
+用户的信息
+按模块分：政治，体育，娱乐分
+以后在建类的时候就是写这些东西论坛用户信息
+版主禁言：权限
+
+板块为主
+菱形：关系   条件判断
+部门编号：
+1对1：
+
+数据库设计：
+就像练武功：一级一级的练
+第一范式：
+确保每列的原子性
+在一列的内容中，表中的每一列的内容不能切割了
+第二范式：
+就是设置主键，主键不允许出现相同的值，内容不能重复，每一行数据是唯一的
+第三范式：
+表中不能存在其他表中主键以外的字段
+
+1.数据冗余
+2.安全性变差了（1001字段可以有多个）
+
+完整性=数据+可靠+准确（是通过业务程序转换的，是什么类型就是什么类型，必须转化好了）比如年份，它是date 类型的数据，把这个东西塞到当前的数据库里
+--》百度搜索的文本框：输入20555，是一个字符串，可以转换
+--》消费满多少钱（触发器），累计到多少积分就自动转，
+
+数据类型，表的操作
+J2SE（随便抽）

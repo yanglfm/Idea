@@ -1,0 +1,46 @@
+一、反射机制2
+	反射中的方法：java.lang.reflect.Method 
+	A 方法提供有关类和接口上单一方法的信息和访问权限。 反映的方法可以是类方法或实例方法（包括抽象方法）。 
+	String
+	
+	反射构造方法：java.lang.reflect.Constructor<T>：
+				Constructor提供了一个类的单个构造函数的信息和访问。  
+
+作业：
+	书写一个类Customer
+			属性：name、age
+			构造方法：
+				Customer（name，age）
+			重写：
+				toString
+				最终输出格式：Customer【张三，20】
+					
+	2.关与某个类如何获取父类或父接口：自行解决  例：java.util.Date
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

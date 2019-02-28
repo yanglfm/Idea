@@ -1,0 +1,252 @@
+DDL:建表
+DML：数据库操纵语言：增删改操作
+DQL：查询语句，查询是在数据化结构语句中最难，所以分开了
+DCL：控制语句，事务的提交
+当前的用户可以查看到删除了，数据库底层，提交后，另一个用户才可以查看到
+3.完整性：
+域完整性，
+实体完整性，
+自定义完整性，
+引用完整性，
+防止数据冗余，代码中保持数据的准确性
+
+数据库中的
+数据表的中一行是一个实体
+2018.08.31 AM
+第五章
+一、新增数据
+insert into 表名（列名） values(值)
+根据指定的列写入值
+create table student （
+stuid int primary key,
+stuname varchar2(20),
+age int,
+sex char(2),
+birthday date,
+tel varchar2(11),
+email varchar2(20)
+);//要以分号结尾
+insert into student（stuid,stuname,age,sex,tel,email）values (1001，'张三'，20，‘男’，‘13981234568’，‘zhangsan@163.com.cn’);
+//一一对应,分号结尾，一次性建表和插入数据，（提交：按窗口栏的绿色的）
+-----提交事件
+commit;//(提交到数据库的表格中)
+-----插入日期字段（注意，这个较为特殊）
+insert into student （stuid，birthday）values（1002，‘2018-08-31 9:22:22’）；//这是不行的
+insert into student （stuid，birthday）values（1002，‘12-8月-18’）；//这是插入进去了//
+//默认这种格式
+//查询表格内容
+select * from student;
+-----插入语句如果不写字段 表明插入全部字段
+语法二：INSERT   INTO  表名  VALUES(值)
+注意：1.表中所有列都必须写入
+      2.表中如果存在默认值则使用DEFAULT替入
+      3.如果某列不需要写入数据则使用NULL替入
+
+insert into student values (1001，'张三'，20，‘男’，‘12-8月-18’，‘13981234568’，‘zhangsan@163.com.cn’
+//一一对应，每个都要写
+-----插入语句的注意要点：
+1.写入的值的数量必须和列的数量匹配
+2.写入的值和列的数据类型必须匹配
+3.非空约束的列必须写在指定列中
+4.主键必须写在指定列中
+5.写入的值必须满足该列的CHECK约束
+
+----姓名不能为空
+alter table student modify stuname not null;
+insert into student(stuid,stuname) values(1001,NULL);//这时无法将NUll值插入stuname
+insert into student(stuid,stuname) values(1001,'zhangsan');//这个可以
+
+语法二：演示，带有default时插入可以看到
+create table student （
+stuid int primary key,
+stuname varchar2(20),
+age int,
+sex char(2),
+birthday date,
+tel varchar2(11),
+email varchar2(20)default（‘syjy@163.com’）
+);
+insert into student(stuid) values(1001);（对）
+insert into student （stuid，birthday,email）values（1002，null,default);（对）
+insert into student （stuid，birthday,email）values（1003，null,null);（对）
+//在有默认值的时候，可以填默认值、null，但是不能不填入内容，
+回帖是插入，回一条插一条
+
+------创建表的同时插入数据的做法
+create table 表名 as select * from 表名
+create table stu as select * from student;
+select * from stu;//当前用户下的把表student的内容全部拷贝到stu表中
+
+-------其他用户下的表 也是可以使用以上方式完成 只是需要注意使用 用户名.表名
+create table employees as select * from hr.employees;//
+select  * from employees;//我们的数据是在某一个账号下的表，万一我们的数据上线了，这样保证了测试的表与原先上线的表的字段是一致的
+
+--------表中的数据复制
+insert into 新表 select * from 原表
+insert into employees select * from hr.employees;//主要字段内容一样就可以了
+insert into employees select * from employees;//自己插入自己的数据，主要字段的内容一样就行
+表复制的语句能否反复执行？反复复制的过程没有问题，但是会造成数据冗余，违反了三段式
+拷贝的过程中只是拷贝数据，并没有拷贝到其设置的主键
+
+
+-------
+日期类型的新增
+  ORACLE中需要将时间进行转换才能写入
+  使用TO_DATE (字符型日期，时间格式)
+   字符型日期：是自己写的格式，
+   时间格式/日期格式：
+YYYY                           年
+MM                             月
+DD                              天
+HH(HH24)               小时
+MI                               分
+SS                                秒
+ insert  into student (stuid,birthday) values (1004,to_date('2018-08-22 11:22:33','yyyy-MM-dd HH:mi:ss'));
+ insert  into student (stuid,birthday) values (1005,to_date('2018-08-22 13:22:33','yyyy-MM-dd HH24:mi:ss'));
+select * from student;
+
+-------序列
+  序列用于按照指定的规则自动生成数据，如人员的编号等
+  在建表时很多时候表中并无合适的主键，可以使用序列并将该序列作为表中的主键
+
+没有主键，把student表中的主键删除
+-------创建序列
+     create sequence 序列名称
+     start with     起始数
+     increment by   增长数
+     maxvalue       最大值
+     minvalue       最小值
+
+ 举例：create sequence stuid;//在sequence包下有一个stuid ,在没有指定下
+ -------使用序列 序列名.nextval
+ insert into student（stuid，stuname）values(stuid.nextval,'张三');//使用序列的过程，stuid自动增
+
+ -------创建序列并指定序列增长方式
+ create sequence stuid2
+ start with 1
+ increment by 2
+ maxvalue 9999
+ minvalue 1;
+ insert into student（stuid，stuname）values(stuid2.nextval,'张三');  //1,3,5,7,9
+
+ -------修改数据语法
+   update 表名 set 字段1，字段2 where 条件
+   set 字段：字段=值 //set 字段=值的写法
+ 举例：修改张三的年龄，并且给定张三的手机号码
+ update student set age=20，tel='13912546898' where stuid=1;
+ 注意：如果不写where条件，表中的该列的所有字段将全部更改
+
+ 不会把旧的员工号给你，只会重新开,不会因为你删除了之前员工的信息而补全之前的序列，只会在之前的基础上一次增加
+insert into student（stuid，stuname）values(stuid2.nextval,'张三');
+update student set age=20，tel='13912546898';//这两列的age 和tel 都是这两个数值
+
+----WHERE条件的使用
+    WHERE语句后应为一个表达式，且表达式返回是或否的结果
+    WHERE后的表达式可以为一个或多个使用逻辑运算符AND和OR关联
+update student set sex=‘男’ where age=30 and stuname='张三';//and:并且
+update student set tel='13846557897' where stuname='张三'or sex='男';//or:或者
+
+
+  -------关系运算符
+  >
+  <
+  >=
+  <=
+  !=
+  between and
+  in:在什么范围
+  like:像什么东西
+  is:是
+
+  举例：
+  1.将student表中年龄大于20岁学生的邮箱地址改成Oracle@163.com
+  update student set email='Oracle@163.com' where age>20;
+
+  -------把年龄在20-30岁的学生信息查询出来//select是查询语句
+  select * from student where age between 20 and 30;//between and
+  select * from student where age>=20 and age <= 30;//>= and <=
+
+  -------把年龄不是30岁的学生信息查询出来
+  select * from student where age！=30;
+  select * from student where age<>30;//这个也是不等于符号<>等价于！=
+
+  ------in 它表示在某个指定范围内的内容是否匹配到 查询学生年龄在18,20岁的这些学员查询得出
+  select * from student where age in(18,20);//只查询18或者20岁这两个年龄的
+
+  ---计算机原理，数据库原理看书
+  2018.08.31 PM
+ ------in 它是指单独的一个值
+ select * from student where age in(25,20);//
+  select * from student where age in(25,18,19);//指的是in（）括号里面的值是否符合
+  也可以人为的加入数据（随便塞入几个数据）
+
+ ------查找下一个序列值是多少？
+ 我们需要借助伪表dual来查询
+ select stuid.nextval from dual;//有缓存的话重新启动
+ select stuid2.nextval from dual;
+ //重新建表，序列重新建（删除之前的表和序列）
+  select stuid.nextval from dual;//在查询的时候会用掉一次序列的
+  insert into student（stuid，stuname）values(stuid.nextval,'张三');
+  select stuid.nextval from dual;//
+  注意：就是查询的过程中会用掉一个序列
+---------------------------
+  逻辑运算符
+   and
+   or
+   not
+--查询没有手机号码信息的张三（有两个张三，一个有手机号，一个没有）
+select * from student where tel=null;//这个找不到
+select * from student where tel=null or stuname='张三';//这个找不到
+select * from student where tel=null and stuname='张三';//这个找不到
+
+--------is跟逻辑运算符一起用
+select * from student where tel is not null;//找到手机号不是空的
+select * from student where tel is null;//找到手机号是空的
+--------like 代表模糊查询
+（凡是姓名里带有张姓的查出来）
+select * from student where stuname like '%张%';
+--------%的用法
+使用一个% ，如果在字符的右边代表以XXX字符开头查找,%后面就是任意内容
+举例:select * from student where stuname like '张%';
+反之，%在字符的左边，一XXX字符结尾的查询方式
+select * from student where stuname like '%六';
+两个%是指字符随意在哪个位置
+
+-------查询年龄为空的人员信息
+select * from student where age is null;
+
+--------如何查询得到当前的系统时间（日志记录，银行转账）
+select sysdate from dual;//dual 是伪表，看看又不动
+--------把年龄是21或者是22的学员生日字段改成当前系统时间
+ update student set birthday=sysdate where age in(21,22);
+ update student set birthday=sysdate where age=20 or age=21;//效果一样
+--------查询姓名中带有L字母的人员 无论字母大小写
+select * from student where stuname like '%L%' or stuname like '%l%';//保证只要有L或者l就能够找到
+--------将没有填写手机号的人员邮箱设置为空
+update student set email=null where tel is null;
+--------将填写过有些的学员年龄改为22
+update student set age=22 where email is not null;
+--------
+update student set email='syjy@126.com.cn' where sex='男';
+--------
+update student set sex='女' where sex is null;
+-----------
+update emp set sal=sal+500 where hiredate>to_date('1980/12/15','YYYY/MM/DD');//前后两者的格式保持一致，前面是字符串表达模式，后面是指定格式
+update emp set sal=sal+500 ;这个是全部员工的工资都加；
+
+----------删除的语法
+---delete from 表名
+---delete from 表名 where 条件
+create table stu as select * from student;
+delete from student;
+delete from student where stuid=1;
+
+-----------删除表中所有数据
+----truncate table 表名;
+----truncate table student;
+---delete 和truncate 删除有什么区别？
+删除表中数据的时候，前者是有日志记录和事件，后者无日志记录直接删除，在效率上比我们delete来得快
+truncate删除后数据不可回改，右边的红柱子。一般用delete
+select * from employees;
+drop 是将表都删除了，而delete和truncate是把数据删除
+

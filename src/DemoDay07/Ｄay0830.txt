@@ -1,0 +1,248 @@
+第四章
+1.域的完整性
+    它是指当前的列中所定义的数据类型必须保持一致 如int类型，不能录入‘a’
+2.实例完整性
+    它的规则是主要的属性是非空的，Oracle在创建表的语句中提供了primary key子句
+    供用户在建表的时候指定关系的主键列
+3.自定义完整性
+    它是指在数据表中的某一个列或者单元格指定其验证规则  如年龄 age 只能是数字，并给定区间范围
+4.引用完整性
+    它是用来建立表与表之间的关系来联系的主表关键字与外部表【从表】关键字引用的约束条件
+
+    举例：
+    学生信息
+       学号 姓名 联系方式
+       1001  张三  13978946361
+    成绩表
+       成绩编号 学号 科目编号 成绩
+       101      1001  201     100
+       102      1001  203     90
+    科目表
+       科目编号 科目名称
+       201      java
+       202      Html
+       203      C
+   --》学号是唯一的
+   --》按照顺序过来
+   --》如果主表中没有，从表中也不能凭空多一个
+   --》自定义自动插入，升级为VIP
+
+二、Oracle 数据的常用的数据类型
+   （1）数值类型
+   1.number 数值 它包含的是整型和浮点型（在没有指定的时候，可以是整型也可以是浮点型）
+
+   原始的数                得到的数
+   123.89   number         123.89
+   123.89   number(3)      124//选择整型保留3位
+   123.89   number(6,2)    123.89 //表示一共有6位，保留2位小数，在编辑数据的时候，要注意清空缓存，再填入数据
+   //如果之前是Type：int类型的数据，如100，Type：改为Number，这是可以的，这个向上转型是可以的
+   如果之前是Number类型，修改为int类型是不允许的（Edit修改--》Columns）
+   Edit Date-->编辑数据
+   （1）数值类型
+   1.number 数值       它包含的是整型和浮点型
+   2.INT/INTEGER       它代表整数值
+   3.float             浮点数据类型//下拉中没有，自己写也OK的
+
+   （2）字符类型
+   4.char()            定长字符，最大为2000b//一个中文汉字需要char(2),char(10),是代表开辟10个字节，用几个之后还剩几个
+   5.nchar             定长的Unicode字符，最大1000b//一个中文汉字，nchar(1)就可以实现了，
+   6.varchar2()        不定长 最大到4000b//varchar2(20)，你用几个就是几个，但是不能超过20，超过就不可以了
+   7.nvarchar()        不定长 最大到1000b//也是代表中文不定长字符
+   8.Long              变长字符类型//其实就是字符，在编辑完点开查看时，只能看到《Long》，看不到具体内容，只有点这个，才看到
+   （3）日期类型
+   9.Date              日期类型 固定7B//年月日（只选年月日）//想要显示年月日时分秒（就在下拉框中选择时分秒）
+
+   （4）大对象类型
+   10.LOB              8-12TB数据并可以分段处理
+   11.clob             字符大对象中 存储单字节的字符数据
+   12.blob             用于存储二进制数据 视频 音频
+
+三、创建 表
+
+----建表：
+   create table 表名（
+             列名  数据类型，
+             列名  数据类型
+             ....
+             );
+           例：  create table a(
+                  id  integer,
+                  name varchar2(20)
+                  );
+----删除 表
+   drop table 表名;
+           例：drop table a;
+四、修改数据表
+      1.添加列
+      alter table 表名 add 列名 数据类型
+      alter table a add birth date;(在表a的columns上有显示)
+      2.修改列的数据类型
+      alter table 表名 modify 原列名 数据类型
+      alter table a modify name nvarchar2(20);//修改为新的数据类型
+      3.修改列名
+      alter table 表名 rename column 原列名 to 新列名
+      alter table a  rename column name to username;
+      4.删除列
+      alter table 表名 drop column 原列名
+      alter table a drop column birth;//删除birth这一列
+
+      注意：以上的操作在正常情况下，表中是不存在任何数据的，
+      可以正常修改，但是如果表中已有数据，如果数据类型向下
+      修改，则无法正常修改，（一般正常的数据是不为空的情况下）
+      修改数据的时候，该列的值必须是NULL
+      alter table a modify id number(5,3);//这个是不可以的，原有的是integer类型的数据
+      alter table a modify id number;//这个是可以的，原有的数据类型是integer
+
+      举例：
+        Test 表 某个字段是 a varchar2(20),然后把这个字段长度修改为
+        10个字段的长度，一般会出现两种情况：
+          1.如果表中无任何数据，则修改成功
+          2.但是如果表中已经有数据了，并且长度超过10个字符那么就无法更改了
+
+五、主键
+       用于唯一标示表中的每一行数据
+       表中经常有一个列或者是多个列的组合，其值能唯一的标识表中
+       的每一行，这样的一列或者是多列称之为表的主键，通过它可以
+       强制表的实体完整性
+
+六、主键设定的原则
+      1.唯一性 它是保证实体完整性的前提
+      2.稳定性 它是加快数据库的操作的速度
+           2.1 在表中添加新纪录的时候，数据库会自动检查新纪录的主键值，
+           不允许改值与其他记录的主键值重复
+           2.2 数据库自动按主键值的顺序显示表中的记录，如果没有定义主键，
+           则按输入记录的顺序显示表中的记录
+七、主键的添加
+（1）
+      alter table 表名
+      add constraint 主键名 primary key (列名)
+      --主键设定
+      alter table a
+      add constraint pk_id primary key(id);(edit->key)  //这是利用命令去添加主键，也可以在文件直接修改
+      --删除主键
+      alter table 表名 drop primary key
+      alter table a drop primary key;
+      --创建表的时候直接创建主键
+ （2）     --方法一:创建表的时候直接创建主键  主键的名称由系统产生 sys_编号
+      create table a(
+      id integer primary key,// 主键的名称由系统产生 sys_编号
+      name varchar2()
+      );
+ （3）     --方法二:创建表的时候直接创建主键 在新表创建最后一个字段之后添加 constraint 主键名 primary key(id)
+       create table a(
+            id integer,
+            name varchar2(20),
+            constraint pk_id primary key(id)//这是自己设置主键的名称
+            );
+      一共三种创建主键的方式
+
+--设定唯一约束：来完成唯一的实体完整性
+    它是在除主键字段以外 来限定该列不能出现重复的数据
+    alter table 表名 add constraint 约束名 unique（字段）
+    以上的做法也称之为组合主键，符合主键
+    alter table a add constraint un_classID unique(classid);
+
+--主键和唯一约束主键有什么区别？
+    主键是不允许有null值，唯一约束主键可以有null值(空值也是一个值，不代表没有值，只不过这个值是系统插入进去的，而且允许有多条数据的唯一约束主键的值为空的情况)
+
+--删除约束名
+   alter table 表名 drop constraint 约束名
+   alter table a drop constraint un_classID;
+
+八、外键约束
+   当数据表中的数据需要引用另一张表中的数据必须建立外键约束
+   （创建b表）
+   添加外键约束的语法
+   alter table 表名 add constraint 外键约束名 foreign key(外键列)
+   references 主表名（主键字段）
+
+   alter table b add constraint fk_id foreign key (A_ID) references a(id);//把a表中id引入到表b中外键列名是A_ID
+
+九、非空约束
+   它是指单列的值必须写不能为空
+   alter table 表名 modify 原列名 not null
+   //比如在b表中的bname 做非空约束，这时如果在b表中的bname这一行不能不写入值
+   alter table b modify bname not null;
+
+十、默认约束
+   它是指在没有写入数据的情况下，也能以默认值呈现
+   默认值的添加必须在建表的时候就写入
+   create table b(
+        b_id int primary key,
+        bemail varchar2(20) default('syjy@163.com.cn')
+   );//创建表b时，如果bemail不写的话，就呈现出syjy@163.com.cn，如果自己手动添加的话，也可以，就显示添加的内容
+
+十一、条件约束
+    它是对单列的数据进行有效验证
+    alter  table 表名 add constraint 约束名 check （约束条件）
+    //在b表中Edit --》column--》添加age字段--》对age进行约束，不能插入（-100或者大于120的值）
+
+    年龄在18-60之间是属于上班
+    alter table b add constraint ck_age check(age>=18 and age<=60);
+
+
+alter table a add constraint name_classID primary key(name,classid);//选两列作为主键，这样生成的id号无法保证唯一性--》序列，自动插
+主键一般只有一个
+
+验证性别是男还是女 sex，录入的时候：只能这两个
+验证姓名中带有L字母的人名，才能写进
+长度的验证录入的内容只能是6个字符 建的时候是name varchar2（20）,但是录入的时候只能是6个长度
+学生的学号必须在1001-1010合法
+
+create table a (
+id integer,
+name varchar2(20),
+sex char(2),
+age int
+);
+alter table a add constraint ck_sex check (sex='男' or sex='女');
+alter table a add constraint ck_name check (name like '%L%');
+alter table a add constraint ck_len check (name like '_______');//表里不能有数据
+alter table a add constraint ck_no check(id between 1001 and 1010);
+
+create table BBSUSERS(
+  BUID	INT,
+  UNAME	VARCHAR2(32),
+  UPASSWORD	VARCHAR2(16) default('888888'),
+  UEMAIL	VARCHAR2(32) default('P@P.COM'),
+  UBIRTHDAY	TIMESTAMP,
+  USEX	INT default(1),
+  UCLASS	INT default(1),
+  USTATEMENT	VARCHAR2(255),
+  UREGTIMESTAMP	TIMESTAMP,
+  USTATE	INT default(1),
+  UPOINT	INT default(20),
+  constraint pk_uid primary key(BUID)
+);
+
+comment on table BBSUSERS.BUID
+  is '用户编号';
+comment on column BBSUSERS.UNAME
+  is '用户名';
+comment on column BBSUSERS.UPASSWORD
+  is '密码';
+comment on column BBSUSERS.UEMAIL
+  is '电子邮件';
+comment on column BBSUSERS.UBIRTHDAY
+  is '生日';
+comment on column BBSUSERS.USEX
+  is '性别：1 男 0 女';
+comment on column BBSUSERS.UCLASS
+  is '用户等级';
+comment on column BBSUSERS.USTATEMENT
+  is '备注信息';
+comment on column BBSUSERS.UREGTIMESTAMP
+  is '注册日期';
+comment on column BBSUSERS.USTATE
+  is '状态 如是否在线';
+comment on column BBSUSERS.UPOINT
+  is '用户积分';
+
+ alter table BBSUSERS modify UID not null;
+ alter table BBSUSERS modify UNAME not null;
+ alter table BBSUSERS modify UPASSWORD not null;
+ alter table BBSUSERS modify USEX not null;
+ alter table BBSUSERS modify UREGTIMESTAMP not null;
+
+ （name like '%L%'）//大写L
+ update emp
